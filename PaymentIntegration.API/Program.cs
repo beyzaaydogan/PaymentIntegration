@@ -58,17 +58,13 @@ builder.Services.AddBalanceManagementApiClient(builder.Configuration["BalanceMan
     client =>
     {
         client.AddPolicyHandler(Policy
-          //.Handle<ApiException>()
-          //.Handle<ApiException>(ex => ex.StatusCode == 500 || ex.StatusCode == 400)
           .HandleResult<HttpResponseMessage>(r => r.StatusCode == HttpStatusCode.InternalServerError)
           .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(2),
         onRetry: (outcome, timespan, retryAttempt, context) =>
         {
-            
             logger.LogInformation(
                 $"Retry attempt {retryAttempt} after {timespan.TotalSeconds}s due to HTTP 500 from {outcome.Result?.RequestMessage?.RequestUri}"
             );
-
         }));
     });
 
@@ -76,6 +72,14 @@ builder.Services.AddAutoMapper(typeof(PaymentMappingProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(ProductMappingProfile).Assembly);
 
 builder.Services.AddMemoryCache();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
