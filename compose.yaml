@@ -1,0 +1,37 @@
+﻿version: '3.8'
+
+networks:
+  shared_network:
+    external: true
+
+services:
+  paymentintegration.api:
+    image: paymentintegration.api
+    build:
+      context: .
+      dockerfile: PaymentIntegration.API/Dockerfile
+    networks:
+      - shared_network
+    environment:
+      MONGO__HOST: mongodb
+      ASPNETCORE_URLS: "http://0.0.0.0:5000"
+      ASPNETCORE_ENVIRONMENT: Docker
+      GITHUB_PAC: ${GITHUB_PAC}
+      GITHUB_USERNAME: ${GITHUB_USERNAME}
+    depends_on:
+      - mongodb
+    ports:
+      - "5010:5000"
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    networks:
+      - shared_network
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  mongodb_data:

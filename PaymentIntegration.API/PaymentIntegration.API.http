@@ -1,0 +1,5 @@
+
+GET {{API_HostAddress}}/api/Products
+Accept: application/json
+
+###

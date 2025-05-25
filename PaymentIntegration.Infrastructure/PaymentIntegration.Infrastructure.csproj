@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\PaymentIntegration.Application\PaymentIntegration.Application.csproj" />
+      <ProjectReference Include="..\PaymentIntegration.Domain\PaymentIntegration.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="14.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.5" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
+      <PackageReference Include="MongoDB.Driver" Version="3.4.0" />
+      <PackageReference Include="PaymentIntegration.HttpClient" Version="1.0.1" />
+    </ItemGroup>
+
+</Project>
