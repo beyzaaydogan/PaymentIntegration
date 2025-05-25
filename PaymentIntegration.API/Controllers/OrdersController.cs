@@ -5,7 +5,7 @@ using PaymentIntegration.Application.Interfaces;
 namespace PaymentIntegration.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/orders")]
 public class OrdersController : ControllerBase
 {
     private readonly IPaymentService _paymentService;
@@ -16,6 +16,8 @@ public class OrdersController : ControllerBase
     }
     
     [HttpPost]
+    [ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreatePreOrderRequest request)
     {   
         var baseResponse = await _paymentService.CreatePaymentAsync(request);
@@ -26,6 +28,8 @@ public class OrdersController : ControllerBase
     }
     
     [HttpPost("{id}/complete")]
+    [ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Complete(string id)
     {
         if (string.IsNullOrWhiteSpace(id))

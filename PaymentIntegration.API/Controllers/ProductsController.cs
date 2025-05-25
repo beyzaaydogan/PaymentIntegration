@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using PaymentIntegration.API.Models;
 using PaymentIntegration.Application.Interfaces;
 
 namespace PaymentIntegration.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/products")]
 public class ProductsController : ControllerBase
 {
     private readonly IProductService _productService;
@@ -15,6 +16,8 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(BaseResponse<List<ProductDto>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<List<ProductDto>>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Get()
     {
         var baseResponse = await _productService.GetAsync();
