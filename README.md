@@ -4,6 +4,8 @@
 
 A clean architectural structure is followed in the project architecture. Figure 1 shows the layers of the project structure.
 
+![Figure 1](./images/payment-integration-2.jpg)
+Figure 1
 ## Setup
 
 - Since the project needs _PaymentIntegration.HttpClient_ package from <https://nuget.pkg.github.com/beyzaaydogan/index.json>, Nuget.config file has 2 sources, and one of them is GitHub. Before running the project, a personal access token should be added.
