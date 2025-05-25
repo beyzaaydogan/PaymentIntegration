@@ -14,5 +14,8 @@
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::54F1D591-2681-4509-A4DD-97FBC3F770D9::net9.0::PaymentIntegration.Tests.PaymentServiceTests.CreatePaymentAsync_ReturnsSuccess_WhenPreorderSucceeds&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::54F1D591-2681-4509-A4DD-97FBC3F770D9::net9.0::PaymentIntegration.Tests.PaymentServiceTests.CreatePaymentAsync_ReturnsFailure_WhenPreorderThrowsException&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::54F1D591-2681-4509-A4DD-97FBC3F770D9::net9.0::PaymentIntegration.Tests.PaymentServiceTests.CompletePaymentAsync_ReturnsFailure_WhenUpdatePaymentStatusFails&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::54F1D591-2681-4509-A4DD-97FBC3F770D9::net9.0::PaymentIntegration.Tests.PaymentServiceTests.CompletePaymentAsync_ReturnsFailure_WhenCompleteAsyncThrowsException&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::54F1D591-2681-4509-A4DD-97FBC3F770D9::net9.0::PaymentIntegration.Tests.PaymentServiceTests.CompletePaymentAsync_ReturnsSuccess_WhenPaymentCompletesSuccessfully&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

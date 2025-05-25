@@ -105,7 +105,8 @@ using (var scope = app.Services.CreateScope())
     await runner.RunMigrationsAsync(migrations);
 }
 
-// app.MapHealthChecks("/health");
+app.MapHealthChecks("/health");
+
 app.MapHealthChecks("/health/ready", new HealthCheckOptions
 {
     Predicate = check => check.Tags.Contains("readiness")

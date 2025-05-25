@@ -4,6 +4,7 @@ using Moq;
 using PaymentIntegration.API.Models;
 using PaymentIntegration.Application.Interfaces;
 using PaymentIntegration.Domain.Entities;
+using PaymentIntegration.Domain.Enums;
 using PaymentIntegration.HttpClient;
 using PaymentIntegration.Infrastructure.Services;
 
@@ -41,7 +42,6 @@ public class PaymentServiceTests
             Amount = 100,
             OrderId = "order123"
         };
-
 
         var paymentEntity = new Payment { };
 
@@ -98,6 +98,85 @@ public class PaymentServiceTests
         _balanceClientMock.Verify(x => x.PreorderAsync(It.IsAny<Body>()), Times.Once);
         _mapperMock.Verify(m => m.Map<Payment>(It.IsAny<CreatePreOrderRequest>()), Times.Never);
         _paymentRepositoryMock.Verify(r => r.CreateAsync(It.IsAny<Payment>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CompletePaymentAsync_ReturnsFailure_WhenUpdatePaymentStatusFails()
+    {
+        // Arrange
+        var orderId = "order123";
+        _paymentRepositoryMock
+            .Setup(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Processing))
+            .ReturnsAsync(false);
+
+        // Act
+        var result = await _paymentService.CompletePaymentAsync(orderId);
+
+        // Assert
+        Assert.False(result.Success);
+        Assert.Equal("Complete payment failed", result.Error);
+
+        _paymentRepositoryMock.Verify(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Processing), Times.Once);
+        _balanceClientMock.Verify(c => c.CompleteAsync(It.IsAny<Body2>()), Times.Never);
+        _paymentRepositoryMock.Verify(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Completed), Times.Never);
+    }
+
+    [Fact]
+    public async Task CompletePaymentAsync_ReturnsFailure_WhenCompleteAsyncThrowsException()
+    {
+        // Arrange
+        var orderId = "order123";
+        var exceptionMessage = "API error";
+
+        _paymentRepositoryMock
+            .Setup(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Processing))
+            .ReturnsAsync(true);
+
+        _balanceClientMock
+            .Setup(c => c.CompleteAsync(It.IsAny<Body2>()))
+            .ThrowsAsync(new Exception(exceptionMessage));
+
+        // Act
+        var result = await _paymentService.CompletePaymentAsync(orderId);
+
+        // Assert
+        Assert.False(result.Success);
+        Assert.Equal(exceptionMessage, result.Error);
+
+        _paymentRepositoryMock.Verify(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Processing), Times.Once);
+        _balanceClientMock.Verify(c => c.CompleteAsync(It.Is<Body2>(b => b.OrderId == orderId)), Times.Once);
+        _paymentRepositoryMock.Verify(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Completed), Times.Never);
+    }
+
+    [Fact]
+    public async Task CompletePaymentAsync_ReturnsSuccess_WhenPaymentCompletesSuccessfully()
+    {
+        // Arrange
+        var orderId = "order123";
+        var responseMock = new Response4();
+
+        _paymentRepositoryMock
+            .Setup(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Processing))
+            .ReturnsAsync(true);
+
+        _balanceClientMock
+            .Setup(c => c.CompleteAsync(It.IsAny<Body2>()))
+            .ReturnsAsync(responseMock);
+
+        _paymentRepositoryMock
+            .Setup(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Completed))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await _paymentService.CompletePaymentAsync(orderId);
+
+        // Assert
+        Assert.True(result.Success);
+        Assert.Contains(orderId, result.Data);
+
+        _paymentRepositoryMock.Verify(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Processing), Times.Once);
+        _balanceClientMock.Verify(c => c.CompleteAsync(It.Is<Body2>(b => b.OrderId == orderId)), Times.Once);
+        _paymentRepositoryMock.Verify(r => r.UpdatePaymentStatusAsync(orderId, PaymentStatus.Completed), Times.Once);
     }
 
 }
